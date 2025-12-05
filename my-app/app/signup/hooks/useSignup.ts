@@ -31,19 +31,24 @@ export function useSignUp(): UseSignUpResult {
       setError(null);
 
       try {
-        const result = await apiClient<SignUpResponse>(`/member/signup`, {
+        const data = await apiClient<SignUpResponse>(`/member/signup`, {
           method: "POST",
           body: JSON.stringify(payload),
         });
+        // 서버 검증 실패 (email/id 중복 등)
+        if (!data.success) {
+          // errors 배열이 있다면 필드 검증 에러
+          if (data.errors) {
+            return data; // handleSubmit에서 localError로 처리할 수 있게 반환
+          }
 
-        //실패
-        if (result.success === false) {
-          setError(result.message ?? "회원가입에 실패했습니다.");
-          return null;
+          // errors는 없고 message만 있는 실패
+          setError(data.message ?? "회원가입에 실패했습니다.");
+          return data;
         }
 
-        //성공
-        return result;
+        // 성공
+        return data;
       } catch (e) {
         //apiClient에서 throw한 Error 처리
         if (e instanceof Error) {

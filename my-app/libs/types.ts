@@ -8,6 +8,7 @@ export interface SignUpResponse {
   success: boolean;
   message?: string;
   data?: { memberId: string; email: string };
+  errors?: { field: string; message: string }[];
 }
 
 export interface CheckEmailResponse {

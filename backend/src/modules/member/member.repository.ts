@@ -41,7 +41,7 @@ export class MemberRepository {
       [member.memberId, member.email, member.memberPwd],
     );
 
-    if (result !== 1) {
+    if (result.rowCount !== 1) {
       throw new Error('회원 저장 실패: DB에서 반환된 값이 없습니다.');
     }
 

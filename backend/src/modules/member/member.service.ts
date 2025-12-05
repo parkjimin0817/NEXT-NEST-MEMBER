@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { MemberCreateDto } from './dto/member.create.dto';
 import { MemberEntity } from './member.entity';
 import { MemberRepository } from './member.repository';
@@ -28,20 +28,32 @@ export class MemberService {
    * 회원가입
    */
   async signup(dto: MemberCreateDto) {
+    const errors: { field: string; message: string }[] = [];
     //1) 이메일 중복 체크
     const existsEmail = await this.memberRepository.checkEmail(dto.email);
     if (existsEmail) {
-      throw new ConflictException(
-        `이미 가입된 이메일입니다. email: ${dto.email}`,
-      );
+      errors.push({
+        field: 'email',
+        message: '이미 사용 중인 이메일입니다.',
+      });
     }
     //2) 아이디 중복 체크
     const existsId = await this.memberRepository.checkId(dto.memberId);
     if (existsId) {
-      throw new ConflictException(
-        `사용중인 아이디 입니다. id: ${dto.memberId}`,
-      );
+      errors.push({
+        field: 'memberId',
+        message: '사용 중인 아이디입니다.',
+      });
     }
+
+    //하나라도 중복 오류 있으면 프론트에 전달
+    if (errors.length > 0) {
+      throw new BadRequestException({
+        success: false,
+        errors,
+      });
+    }
+
     //3) memberEntity 생성
     const member = new MemberEntity();
     member.email = dto.email;
@@ -53,6 +65,7 @@ export class MemberService {
     const result = await this.memberRepository.insertMember(member);
 
     //5) 응답
+
     if (!result) {
       return {
         success: false,
