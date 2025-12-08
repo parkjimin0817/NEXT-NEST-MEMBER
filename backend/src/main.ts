@@ -4,6 +4,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 //class-validator 데코레이터를 실행시켜주는 nest의 필터
 import { ValidationPipe } from '@nestjs/common';
+import { SuccessResponseInterceptor } from './modules/common/interceptors/success-response.interceptor';
+import { HttpExceptionFilter } from './modules/common/filters/http-exception.filter';
 
 /**
  * 앱을 시작(부트스트랩)하는 비동기 함수
@@ -14,7 +16,7 @@ async function bootstrap() {
   //Nest 애플리케이션 인스턴스 생성
   const app = await NestFactory.create(AppModule);
 
-  //프로젝트 전체에 적용
+  //1) DTO 기반 유효성 검증
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // DTO에 정의 안 된 필드는 날려버림
@@ -22,6 +24,12 @@ async function bootstrap() {
       transform: true, // 타입 변환 (문자 → 숫자 등)
     }),
   );
+
+  //2) 전역 예외 필터 (에러 응답 통일)
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  //3) 성공 응답 래핑
+  app.useGlobalInterceptors(new SuccessResponseInterceptor());
 
   //CORS 허용 설정 : 프론트는 4000, 백은 4001 => 4000에서 오는 요청은 허용해라
   app.enableCors({

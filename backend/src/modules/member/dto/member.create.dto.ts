@@ -8,8 +8,6 @@ export class MemberCreateDto {
   memberId: string;
 
   @IsString()
-  @MinLength(8)
-  @MaxLength(20)
   memberPwd: string;
 
   @IsEmail()

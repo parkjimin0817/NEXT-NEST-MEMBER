@@ -1,5 +1,5 @@
 "use client";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState } from "react";
 //페이지 이동을 위한 Next.js Router
 import { useRouter } from "next/navigation";
 import { useSignUp } from "../hooks/useSignup";
