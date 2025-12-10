@@ -26,10 +26,10 @@ export class SuccessResponseInterceptor<T> implements NestInterceptor<
     const request = ctx.getRequest<Request>();
 
     return next.handle().pipe(
-      map((data) => {
+      map((data: T) => {
         return {
           success: true,
-          data,
+          data, //컨트롤러에서 리턴한 값
           timestamp: new Date().toISOString(),
           path: request?.url ?? '',
         };

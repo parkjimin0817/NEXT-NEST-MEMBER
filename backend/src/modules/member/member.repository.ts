@@ -102,4 +102,30 @@ export class MemberRepository {
 
     return result.rows[0];
   }
+
+  //비밀번호 포함 멤버 정보
+  async findMemberWithPwdByNo(memberNo: number): Promise<MemberEntity | null> {
+    const result: QueryResult<MemberEntity> = await this.db.query(
+      `SELECT member_no AS "memberNo", member_id AS "memberId", member_pwd AS "memberPwd", email, created_at AS "createdAt"
+      FROM member
+      WHERE member_no = $1`,
+      [memberNo],
+    );
+
+    if (result.rowCount === 0) {
+      return null;
+    }
+
+    return result.rows[0];
+  }
+
+  //멤버 삭제
+  async deleteMemberByNo(memberNo: number): Promise<number | null> {
+    const result = await this.db.query(
+      `DELETE FROM member WHERE member_no = $1`,
+      [memberNo],
+    );
+
+    return result.rowCount;
+  }
 }

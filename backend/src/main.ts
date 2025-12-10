@@ -40,5 +40,12 @@ async function bootstrap() {
   await app.listen(4001);
 }
 
-//실행
-bootstrap();
+/**
+ * 앱 실행 bootstrap()
+ * 에러 발생 시 로그 남기고 프로세스 종료
+ */
+bootstrap().catch((err) => {
+  console.error(err);
+  //프로세스 비정상 종료 (0: 정상 종료, 1: 오류로 종료)
+  process.exit(1);
+});

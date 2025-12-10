@@ -1,14 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginForm() {
   const [memberId, setMemberId] = useState("");
   const [memberPwd, setMemberPwd] = useState("");
   const [error, setError] = useState("");
-
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +48,8 @@ export default function LoginForm() {
       // ✅ 로컬스토리지에 저장
       localStorage.setItem("accessToken", token);
 
-      // ✅ 로그인 성공 후 마이페이지로 이동
-      router.push("/mypage");
+      // 전체 새로고침 + 홈 이동
+      window.location.href = "/";
     } catch (err) {
       console.error(err);
       setError("서버 오류가 발생했습니다.");

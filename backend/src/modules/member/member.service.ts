@@ -111,4 +111,33 @@ export class MemberService {
 
     return result;
   }
+
+  /**
+   * 비밀번호 확인
+   */
+  async checkMemberPwd(memberNo: number, inputPwd: string): Promise<boolean> {
+    const member = await this.memberRepository.findMemberWithPwdByNo(memberNo);
+    if (!member) {
+      throw new NotFoundException({
+        code: 'GET_MEMBER_WITH_PWD_FAILED',
+        message: '회원 정보를 불러오는 중 오류 발생',
+      });
+    }
+    const hashedPwd = member.memberPwd;
+    const isMatched = await bcrypt.compare(inputPwd, hashedPwd);
+    return isMatched;
+  }
+
+  /**
+   * 회원 탈퇴
+   */
+  async deleteMember(memberNo: number): Promise<void> {
+    const result = await this.memberRepository.deleteMemberByNo(memberNo);
+    if (result === 0) {
+      throw new NotFoundException({
+        code: 'DELETE_MEMBER_FAILED',
+        message: '탈퇴 처리 중 오류가 발생했습니다.',
+      });
+    }
+  }
 }

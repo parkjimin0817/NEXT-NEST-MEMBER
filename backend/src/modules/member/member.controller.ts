@@ -5,6 +5,8 @@ import {
   Get,
   ValidationPipe,
   Req,
+  Delete,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { MemberCreateDto } from './dto/member.create.dto';
 import { MemberService } from './member.service';
@@ -69,7 +71,50 @@ export class MemberController {
   @Get('mypage')
   getMyInfo(@Req() req) {
     console.log('토큰 payload:', req.user);
-    const memberNo = req.user.memberNo; // JWT에서 꺼낸 값
+    const memberNo = Number(req.user.memberNo); // JWT에서 꺼낸 값
     return this.memberService.findMemberByNo(memberNo);
+  }
+
+  /**
+   * 비밀번호 확인
+   * POST / member / checkPwd
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('checkPwd')
+  async checkPwd(@Req() req, @Body('memberPwd') memberPwd: string) {
+    const memberNo = Number(req.user.memberNo); // JWT에서 꺼낸 값
+    console.log('입력비번 :', memberPwd);
+    const isMatched = await this.memberService.checkMemberPwd(
+      memberNo,
+      memberPwd,
+    );
+    return {
+      isMatched, //true면 일치, false면 불일치
+      message: isMatched ? '' : '비밀번호가 올바르지 않습니다.',
+    };
+  }
+
+  /**
+   * 탈퇴
+   * DELETE / member / delete
+   */
+  @UseGuards(JwtAuthGuard)
+  @Delete('delete')
+  async deleteMember(@Req() req, @Body('memberPwd') memberPwd: string) {
+    const memberNo = Number(req.user.memberNo);
+
+    const ok = await this.memberService.checkMemberPwd(memberNo, memberPwd);
+    if (!ok) {
+      throw new UnauthorizedException({
+        code: 'PASSWORD_MISMATCH',
+        message: '비밀번호가 일치하지 않습니다.',
+        errors: [
+          { field: 'memberPwd', message: '비밀번호가 일치하지 않습니다.' },
+        ],
+      });
+    }
+
+    await this.memberService.deleteMember(memberNo);
+    return { success: true };
   }
 }

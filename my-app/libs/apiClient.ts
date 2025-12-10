@@ -12,12 +12,13 @@ export async function apiClient<T>(
   options?: RequestInit
 ): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-    //기본헤더
-    headers: { "Content-Type": "application/json" },
-    //호출 쪽에서 헤더 보내면 그걸로 병합
-    ...(options?.headers || {}),
-    //나머지 옵션
+    // 1) 나머지 옵션 먼저
     ...options,
+    // 2) 헤더는 마지막에 병합해서 덮어쓰기
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
   });
 
   //실패일 때

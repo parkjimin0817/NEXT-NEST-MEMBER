@@ -76,6 +76,7 @@ export default function SignUpForm() {
 
   // 이메일 중복 확인
   const handleCheckEmail = async () => {
+    console.log("실행");
     // 형식 자체가 틀리면 먼저 막기
     if (errors.email) {
       setEmailChecked(null);
@@ -100,11 +101,13 @@ export default function SignUpForm() {
         }
       );
 
-      if (emailResult.exists) {
+      console.log(emailResult);
+
+      if (emailResult.data.exists) {
         setEmailChecked(false);
         setError("email", {
           type: "server",
-          message: emailResult.message ?? "이미 사용 중인 이메일입니다.",
+          message: emailResult.data.message ?? "이미 사용 중인 이메일입니다.",
         });
       } else {
         setEmailChecked(true);
@@ -149,11 +152,11 @@ export default function SignUpForm() {
         body: JSON.stringify({ memberId: memberIdValue }),
       });
 
-      if (idResult.exists) {
+      if (idResult.data.exists) {
         setIdChecked(false);
         setError("memberId", {
           type: "server",
-          message: idResult.message ?? "이미 사용 중인 아이디입니다.",
+          message: idResult.data.message ?? "이미 사용 중인 아이디입니다.",
         });
       } else {
         setIdChecked(true);
@@ -226,153 +229,148 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-md border border-gray-100 p-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">회원가입</h1>
-        <p className="text-sm text-gray-500 mb-6">
-          아래 정보를 입력하고 회원가입을 완료하세요.
-        </p>
+    <>
+      <p className="text-sm text-gray-500 mb-6">
+        아래 정보를 입력하고 회원가입을 완료하세요.
+      </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* 이메일 */}
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
-              이메일
-            </label>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {/* 이메일 */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700">
+            이메일
+          </label>
 
-            <div className="flex gap-2">
-              <input
-                type="email"
-                {...emailRegister}
-                onChange={(e) => {
-                  emailRegister.onBlur(e); // react-hook-form에 값 전달
-                  trigger("email"); // 이 필드만 즉시 검증
-                }}
-                className="flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
+          <div className="flex gap-2">
+            <input
+              type="email"
+              {...emailRegister}
+              onChange={(e) => {
+                emailRegister.onBlur(e); // react-hook-form에 값 전달
+                trigger("email"); // 이 필드만 즉시 검증
+              }}
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
                  placeholder:text-gray-400"
-                placeholder="example@domain.com"
-              />
-              <button
-                type="button"
-                onClick={handleCheckEmail}
-                disabled={!emailValue || !!errors.email}
-                className="px-3 py-2.5 text-sm rounded-lg border border-gray-300 text-gray-700
+              placeholder="example@domain.com"
+            />
+            <button
+              type="button"
+              onClick={handleCheckEmail}
+              disabled={!emailValue || !!errors.email}
+              className="px-3 py-2.5 text-sm rounded-lg border border-gray-300 text-gray-700
                  hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
-              >
-                중복확인
-              </button>
-            </div>
-
-            {/* 에러 출력 */}
-            {errors.email && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.email.message}
-              </p>
-            )}
-
-            {/* 성공 메시지 (중복 아님) */}
-            {!errors.email && emailChecked === true && (
-              <p className="text-sm text-green-600 mt-1">
-                사용 가능한 이메일입니다.
-              </p>
-            )}
+            >
+              중복확인
+            </button>
           </div>
 
-          {/* 아이디 */}
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
-              아이디
-            </label>
-            <input
-              {...memberIdRegister}
-              onChange={(e) => {
-                memberIdRegister.onBlur(e); // react-hook-form에 값 전달
-                trigger("memberId"); // 이 필드만 즉시 검증
-              }}
-              onBlur={handleIdBlur}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         placeholder:text-gray-400"
-              placeholder="아이디를 입력하세요"
-            />
-            {/* 에러 출력 */}
-            {errors.memberId && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.memberId.message}
-              </p>
-            )}
-
-            {/* 성공 메시지 (중복 아님) */}
-            {!errors.memberId && idChecked === true && (
-              <p className="text-sm text-green-600 mt-1">
-                사용 가능한 아이디입니다.
-              </p>
-            )}
-          </div>
-
-          {/* 비밀번호 */}
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
-              비밀번호
-            </label>
-            <input
-              type="password"
-              {...register("memberPwd")}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         placeholder:text-gray-400"
-              placeholder="영문, 숫자, 특수문자 포함 8자 이상"
-            />
-            {errors.memberPwd && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.memberPwd.message}
-              </p>
-            )}
-          </div>
-
-          {/* 비밀번호 확인 */}
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
-              비밀번호 확인
-            </label>
-            <input
-              type="password"
-              {...register("confirmPwd")}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                         placeholder:text-gray-400"
-              placeholder="비밀번호를 다시 입력하세요"
-            />
-            {errors.confirmPwd && (
-              <p className="text-sm text-red-600 mt-1">
-                {errors.confirmPwd.message}
-              </p>
-            )}
-          </div>
-
-          {/* 서버/네트워크 에러 (useSignUp 훅에서 온 에러) */}
-          {globalError && (
-            <p className="text-sm text-red-600 mt-1">{globalError}</p>
+          {/* 에러 출력 */}
+          {errors.email && (
+            <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
           )}
 
-          <button
-            type="submit"
-            disabled={
-              isLoading ||
-              isSubmitting ||
-              !isValid ||
-              emailChecked !== true ||
-              idChecked !== true
-            }
-            className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-medium text-white
+          {/* 성공 메시지 (중복 아님) */}
+          {!errors.email && emailChecked === true && (
+            <p className="text-sm text-green-600 mt-1">
+              사용 가능한 이메일입니다.
+            </p>
+          )}
+        </div>
+
+        {/* 아이디 */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700">
+            아이디
+          </label>
+          <input
+            {...memberIdRegister}
+            onChange={(e) => {
+              memberIdRegister.onBlur(e); // react-hook-form에 값 전달
+              trigger("memberId"); // 이 필드만 즉시 검증
+            }}
+            onBlur={handleIdBlur}
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                         placeholder:text-gray-400"
+            placeholder="아이디를 입력하세요"
+          />
+          {/* 에러 출력 */}
+          {errors.memberId && (
+            <p className="text-sm text-red-600 mt-1">
+              {errors.memberId.message}
+            </p>
+          )}
+
+          {/* 성공 메시지 (중복 아님) */}
+          {!errors.memberId && idChecked === true && (
+            <p className="text-sm text-green-600 mt-1">
+              사용 가능한 아이디입니다.
+            </p>
+          )}
+        </div>
+
+        {/* 비밀번호 */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700">
+            비밀번호
+          </label>
+          <input
+            type="password"
+            {...register("memberPwd")}
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                         placeholder:text-gray-400"
+            placeholder="영문, 숫자, 특수문자 포함 8자 이상"
+          />
+          {errors.memberPwd && (
+            <p className="text-sm text-red-600 mt-1">
+              {errors.memberPwd.message}
+            </p>
+          )}
+        </div>
+
+        {/* 비밀번호 확인 */}
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-gray-700">
+            비밀번호 확인
+          </label>
+          <input
+            type="password"
+            {...register("confirmPwd")}
+            className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                         placeholder:text-gray-400"
+            placeholder="비밀번호를 다시 입력하세요"
+          />
+          {errors.confirmPwd && (
+            <p className="text-sm text-red-600 mt-1">
+              {errors.confirmPwd.message}
+            </p>
+          )}
+        </div>
+
+        {/* 서버/네트워크 에러 (useSignUp 훅에서 온 에러) */}
+        {globalError && (
+          <p className="text-sm text-red-600 mt-1">{globalError}</p>
+        )}
+
+        <button
+          type="submit"
+          disabled={
+            isLoading ||
+            isSubmitting ||
+            !isValid ||
+            emailChecked !== true ||
+            idChecked !== true
+          }
+          className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-medium text-white
                        hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-default
                        transition-colors"
-          >
-            {isLoading || isSubmitting ? "회원가입 중..." : "회원가입"}
-          </button>
-        </form>
-      </div>
-    </div>
+        >
+          {isLoading || isSubmitting ? "회원가입 중..." : "회원가입"}
+        </button>
+      </form>
+    </>
   );
 }

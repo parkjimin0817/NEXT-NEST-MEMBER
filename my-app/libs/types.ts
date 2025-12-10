@@ -12,13 +12,31 @@ export interface SignUpResponse {
 }
 
 export interface CheckEmailResponse {
-  exists: boolean;
-  available: boolean;
-  message?: string;
+  success: boolean;
+  data: {
+    exists: boolean;
+    message: string;
+  };
+  timestamp: string;
+  path: string;
 }
 
 export interface CheckIdResponse {
-  exists: boolean;
-  available: boolean;
-  message?: string;
+  success: boolean;
+  data: {
+    exists: boolean;
+    message: string;
+  };
+  timestamp: string;
+  path: string;
+}
+
+export interface CheckPwdResponse {
+  success: boolean;
+  data: {
+    isMatched: boolean;
+    message: string;
+  };
+  timestamp: string;
+  path: string;
 }

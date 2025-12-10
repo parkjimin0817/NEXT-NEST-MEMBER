@@ -27,6 +27,7 @@ export class JwtStartegy extends PassportStrategy(Strategy) {
    * - 이 반환값은 request.user에 자동으로 저장
    */
   validate(payload: JwtPayload) {
+    console.log('JWT validate called. payload =', payload);
     return { memberNo: payload.sub, memberId: payload.memberId };
   }
 }
