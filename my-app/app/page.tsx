@@ -2,15 +2,30 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { apiClient } from "@/libs/apiClient";
+import { PingPongResponse } from "@/libs/types";
 
 export default function Home() {
   const [data, setData] = useState<string>("loading...");
 
   useEffect(() => {
-    fetch("http://localhost:4001/ping")
-      .then((res) => res.json())
-      .then((result) => setData(result.message))
-      .catch((err) => setData("error: " + err));
+    const fetchPing = async () => {
+      try {
+        const result = await apiClient<PingPongResponse>("/ping");
+        console.log(result);
+
+        if (result.success) {
+          setData(result.data.message);
+        } else {
+          setData("요청-응답 실패");
+        }
+      } catch (e) {
+        console.log(e);
+        setData("error");
+      }
+    };
+
+    fetchPing();
   }, []);
 
   return (
@@ -26,7 +41,9 @@ export default function Home() {
       <h2 className="text-2xl font-bold mb-4 text-gray-800">
         백엔드 연결 테스트
       </h2>
-      <p className="text-gray-700">결과: {data}</p>
+      <p className="text-gray-700">
+        결과: <b>ping</b> ➡️ {data}
+      </p>
     </main>
   );
 }

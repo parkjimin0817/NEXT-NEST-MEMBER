@@ -30,7 +30,7 @@ export const signUpSchema = yup.object({
     .min(5, "아이디는 영어, 숫자 포함 5~20자여야 합니다.")
     .max(20, "아이디는 영어, 숫자 포함 5~20자여야 합니다.")
     .matches(
-      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{5,20}$/,
+      /^(?=.*[A-Za-z])[A-Za-z0-9]{5,20}$/,
       "아이디는 영어, 숫자 포함 5~20자여야 합니다."
     ),
   memberPwd: yup
@@ -178,6 +178,12 @@ export default function SignUpForm() {
     }
   };
 
+  type SignUpField = "memberId" | "email";
+
+  const isSignUpField = (field: string): field is SignUpField => {
+    return field === "memberId" || field === "email";
+  };
+
   // 제출 핸들러 (react-hook-form용)
   const onSubmit = async (values: SignUpFormValues) => {
     // 이메일 중복 확인 여부
@@ -200,30 +206,32 @@ export default function SignUpForm() {
 
     // 네트워크/예상치 못한 예외
     if (!result) {
+      alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+      return;
+    }
+
+    // 3) 서버 검증 실패
+    if (!result.success) {
+      // 3-1) 서버가 단일 필드 에러를 내려주는 경우 (memberId / email)
+      if (result.error) {
+        const { field, message } = result.error;
+
+        if (isSignUpField(field)) {
+          // 여기서만 RHF setError 사용 (필드 에러)
+          setError(field, {
+            type: "server",
+            message,
+          });
+          return;
+        }
+      }
+
+      // 3-3) 그 외 애매한 실패
       alert("회원가입 중 오류가 발생했습니다.");
       return;
     }
 
-    // 서버 검증 실패 (이메일/아이디 중복 등)
-    if (!result.success) {
-      if (result.errors && result.errors.length > 0) {
-        result.errors.forEach((err) => {
-          if (err.field === "email" || err.field === "memberId") {
-            setError(err.field as keyof SignUpFormValues, {
-              type: "server",
-              message: err.message,
-            });
-          }
-        });
-      } else if (result.message) {
-        alert(result.message);
-      } else {
-        alert("회원가입 중 오류가 발생했습니다.");
-      }
-      return;
-    }
-
-    // 성공
+    // 4) 성공
     alert("회원가입이 완료되었습니다.");
     router.push("/login");
   };

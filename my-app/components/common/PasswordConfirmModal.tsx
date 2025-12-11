@@ -53,12 +53,24 @@ export default function PasswordConfirmModal({
       }
 
       await onConfirm(password); //부모의 함수 호출
+      resetState();
       onClose();
     } catch (err: any) {
       setError(err.message || "오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetState = () => {
+    setPassword("");
+    setError("");
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    resetState();
+    onClose();
   };
 
   return (
@@ -80,7 +92,7 @@ export default function PasswordConfirmModal({
         <div className="flex justify-end gap-2 pt-2">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-100"
           >
             취소

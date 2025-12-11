@@ -4,11 +4,19 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export interface PingPongResponse {
+  success: boolean;
+  data: { message: string };
+  timestamp: string;
+  path: string;
+}
+
+//Member
 export interface SignUpResponse {
   success: boolean;
   message?: string;
   data?: { memberId: string; email: string };
-  errors?: { field: string; message: string }[];
+  error?: { field: string; message: string };
 }
 
 export interface CheckEmailResponse {
@@ -36,6 +44,30 @@ export interface CheckPwdResponse {
   data: {
     isMatched: boolean;
     message: string;
+  };
+  timestamp: string;
+  path: string;
+}
+
+//Board
+export interface CreateBoardResponse {
+  success: boolean;
+  data: {
+    boardNo: string;
+  };
+  timestamp: string;
+  path: string;
+}
+
+export interface BoardDetailResponse {
+  success: boolean;
+  data: {
+    boardNo: number;
+    boardTitle: string;
+    boardContent: string;
+    createdAt: string;
+    memberNo: number;
+    memberId: string;
   };
   timestamp: string;
   path: string;

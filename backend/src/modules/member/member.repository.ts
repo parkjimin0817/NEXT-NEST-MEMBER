@@ -64,6 +64,7 @@ export class MemberRepository {
 
   /**
    * memberNo으로 회원정보 불러오기
+   * 마이페이지
    */
   async findMemberByNo(memberNo: number): Promise<MemberEntity | null> {
     const result: QueryResult<MemberEntity> = await this.db.query(
@@ -81,6 +82,7 @@ export class MemberRepository {
     return result.rows[0];
   }
 
+  //아이디로 멤버 정보
   async findMemberById(memberId: string): Promise<MemberEntity | null> {
     const result: QueryResult<MemberEntity> = await this.db.query(
       `
@@ -103,7 +105,10 @@ export class MemberRepository {
     return result.rows[0];
   }
 
-  //비밀번호 포함 멤버 정보
+  /**
+   * memberNo으로 member 정보 + pwd 조회하기
+   * 비밀번호 일치 확인, 탈퇴하기
+   */
   async findMemberWithPwdByNo(memberNo: number): Promise<MemberEntity | null> {
     const result: QueryResult<MemberEntity> = await this.db.query(
       `SELECT member_no AS "memberNo", member_id AS "memberId", member_pwd AS "memberPwd", email, created_at AS "createdAt"

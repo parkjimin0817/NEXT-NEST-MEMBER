@@ -12,12 +12,13 @@ export async function apiClient<T>(
   options?: RequestInit
 ): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-    // 1) 나머지 옵션 먼저
+    // 1) 나머지 옵션 먼저 (method, body, credentials, headers 등)
     ...options,
     // 2) 헤더는 마지막에 병합해서 덮어쓰기
+    //(이미 headers 들어갔지만 default 헤더인 content-type이 들어가고 그 외 headers가 headers에 덮어쓰기 된다.)
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers || {}),
+      ...(options?.headers || {}),
     },
   });
 
