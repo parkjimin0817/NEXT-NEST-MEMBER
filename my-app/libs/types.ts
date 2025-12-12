@@ -72,3 +72,31 @@ export interface BoardDetailResponse {
   timestamp: string;
   path: string;
 }
+
+//Board 목록
+export interface BoardItem {
+  boardNo: string;
+  boardTitle: string;
+  memberNo: string;
+  memberId: string;
+  createdAt: string;
+}
+
+export interface BoardListMeta {
+  page: number;
+  size: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface BoardListData {
+  items: BoardItem[];
+  meta: BoardListMeta;
+}
+
+export interface BoardListResponse {
+  success: boolean;
+  data: BoardListData;
+  timestamp: string;
+  path: string;
+}

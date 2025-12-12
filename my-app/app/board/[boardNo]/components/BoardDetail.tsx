@@ -71,7 +71,7 @@ export default function BoardDetail({ boardNo }: BoardDetailProps) {
         <p>{error}</p>
         <button
           type="button"
-          onClick={() => router.push("/board")}
+          onClick={() => router.push("/board/list")}
           className="mt-3 underline text-blue-600"
         >
           목록으로 돌아가기
@@ -86,7 +86,7 @@ export default function BoardDetail({ boardNo }: BoardDetailProps) {
         게시글을 찾을 수 없습니다.
         <button
           type="button"
-          onClick={() => router.push("/board")}
+          onClick={() => router.push("/board/list")}
           className="mt-3 underline text-blue-600"
         >
           목록으로 돌아가기
@@ -120,8 +120,8 @@ export default function BoardDetail({ boardNo }: BoardDetailProps) {
       <div className="mt-6 flex justify-between text-sm">
         <button
           type="button"
-          onClick={() => router.push("/board")}
-          className="underline text-blue-600"
+          onClick={() => router.push("/board/list")}
+          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-200 transition"
         >
           ← 목록으로
         </button>

@@ -3,7 +3,7 @@ import MyInfo from "./components/MyInfo";
 
 export default function MyPage() {
   return (
-    <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
+    <div className="w-full max-w-md mx-auto mt-12 px-4 bg-white rounded-xl shadow-md p-8">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
         내 정보
       </h1>

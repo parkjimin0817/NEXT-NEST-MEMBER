@@ -32,7 +32,7 @@ export default function RootLayout({
         <Header />
 
         {/* 🔥 페이지 콘텐츠 */}
-        <main className="max-w-xl mx-auto mt-12">{children}</main>
+        <main className="mt-12">{children}</main>
       </body>
     </html>
   );

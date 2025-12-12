@@ -58,6 +58,12 @@ export default function Header() {
             >
               마이페이지
             </Link>
+            <Link
+              href="/board/list"
+              className="text-gray-700 hover:text-green-600 font-medium"
+            >
+              게시판
+            </Link>
           </>
         )}
       </div>

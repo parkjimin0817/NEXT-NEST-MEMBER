@@ -15,8 +15,8 @@ export default async function BoardDetailPage({
   const boardNo = Number(resolved.boardNo);
 
   return (
-    <main className="max-w-2xl mx-auto mt-12 bg-white shadow p-8 rounded-lg">
+    <div className="w-full max-w-xl mx-auto mt-12 bg-white shadow p-8 rounded-lg">
       <BoardDetail boardNo={boardNo} />
-    </main>
+    </div>
   );
 }
