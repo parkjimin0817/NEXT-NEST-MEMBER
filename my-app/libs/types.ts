@@ -73,6 +73,12 @@ export interface BoardDetailResponse {
   path: string;
 }
 
+export interface BoardDeleteResponse {
+  success: boolean;
+  timestamp: string;
+  path: string;
+}
+
 //Board 목록
 export interface BoardItem {
   boardNo: string;

@@ -23,20 +23,21 @@ export class BoardRepository {
 
   //게시글 등록
   async insertBoard(memberNo: number, board: BoardCreateDto): Promise<number> {
-    const result: QueryResult<InsertBoardRow> = await this.db.query(
-      `INSERT INTO board (member_no, board_title, board_content)
-      VALUES ($1, $2, $3)
-      RETURNING board_no AS "boardNo"`,
-      [memberNo, board.boardTitle, board.boardContent],
-    );
+    return this.db.withTransaction<number>(async (client) => {
+      const result: QueryResult<InsertBoardRow> = await client.query(
+        `INSERT INTO board (member_no, board_title, board_content)
+       VALUES ($1, $2, $3)
+       RETURNING board_no AS "boardNo"`,
+        [memberNo, board.boardTitle, board.boardContent],
+      );
 
-    if (result.rowCount !== 1) {
-      throw new Error('게시글 저장 실패 : DB에서 반환된 값이 없습니다.');
-    }
+      if (result.rowCount !== 1) {
+        throw new Error('게시글 저장 실패 : DB에서 반환된 값이 없습니다.');
+      }
 
-    return result.rows[0].boardNo;
+      return result.rows[0].boardNo;
+    });
   }
-
   //게시글 수
   async countBoards(): Promise<number> {
     const result = await this.db.query<{ count: string }>(
@@ -95,5 +96,16 @@ export class BoardRepository {
       return null;
     }
     return result.rows[0];
+  }
+
+  //게시글 삭제하기
+  async deleteBoardByNo(memberNo: number, boardNo: number): Promise<number> {
+    return this.db.withTransaction<number>(async (client) => {
+      const result = await client.query(
+        `DELETE FROM BOARD WHERE board_no = $1 AND member_no = $2`,
+        [boardNo, memberNo],
+      );
+      return result.rowCount;
+    });
   }
 }

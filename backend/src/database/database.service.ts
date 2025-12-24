@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Pool, QueryResult, QueryResultRow } from 'pg';
+import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 
 /**
  * PostgreSQL 커넥션 풀(pool)을 생성하고 관리하는 역할을 담당하는 서비스
@@ -46,6 +46,29 @@ export class DataBaseService implements OnModuleDestroy {
     params?: any[],
   ): Promise<QueryResult<T>> {
     return this.pool.query<T>(text, params);
+  }
+
+  //트랜잭션 클라이언트 빌려오기
+  async getClient() {
+    return this.pool.connect();
+  }
+
+  //트랜잭션 처리 유틸
+  async withTransaction<T>(
+    handler: (client: PoolClient) => Promise<T>,
+  ): Promise<T> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result = await handler(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
   }
 
   /**

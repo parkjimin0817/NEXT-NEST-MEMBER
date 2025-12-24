@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -32,6 +33,7 @@ export class BoardController {
   }
 
   //게시글 목록 불러오기
+  //@UseGuards(JwtAuthGuard)
   @Get()
   async getBoardList(
     @Query() query: BoardListQueryDto,
@@ -40,8 +42,20 @@ export class BoardController {
   }
 
   //게시글 상세 불러오기
+  @UseGuards(JwtAuthGuard)
   @Get(':boardNo')
   async getBoardDetail(@Param('boardNo', ParseIntPipe) boardNo: number) {
     return this.boardService.getBoardDetail(boardNo);
+  }
+
+  //게시글 삭제하기
+  @UseGuards(JwtAuthGuard)
+  @Delete(':boardNo')
+  async deleteBoard(
+    @Req() req,
+    @Param('boardNo', ParseIntPipe) boardNo: number,
+  ) {
+    const memberNo = Number(req.user.memberNo);
+    await this.boardService.deleteBoard(memberNo, boardNo);
   }
 }

@@ -52,4 +52,18 @@ export class BoardService {
     };
     return result;
   }
+
+  //게시글 삭제하기
+  async deleteBoard(memberNo: number, boardNo: number): Promise<void> {
+    const result = await this.boardRepository.deleteBoardByNo(
+      memberNo,
+      boardNo,
+    );
+    if (result === 0) {
+      throw new NotFoundException({
+        code: 'DELETE_BOARD_FAILED',
+        message: '게시글 삭제 처리 중 오류 발생했습니다.',
+      });
+    }
+  }
 }

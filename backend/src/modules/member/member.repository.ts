@@ -48,18 +48,20 @@ export class MemberRepository {
    * 회원 저장
    */
   async insertMember(member: MemberCreateDto): Promise<number> {
-    const result: QueryResult<InsertMemberRow> = await this.db.query(
-      `INSERT INTO member (member_id, email, member_pwd)
+    return this.db.withTransaction<number>(async (client) => {
+      const result: QueryResult<InsertMemberRow> = await client.query(
+        `INSERT INTO member (member_id, email, member_pwd)
        VALUES ($1, $2, $3)
        RETURNING member_no AS "memberNo"`,
-      [member.memberId, member.email, member.memberPwd],
-    );
+        [member.memberId, member.email, member.memberPwd],
+      );
 
-    if (result.rowCount !== 1) {
-      throw new Error('회원 저장 실패: DB에서 반환된 값이 없습니다.');
-    }
+      if (result.rowCount !== 1) {
+        throw new Error('회원 저장 실패: DB에서 반환된 값이 없습니다.');
+      }
 
-    return result.rows[0].memberNo;
+      return result.rows[0].memberNo;
+    });
   }
 
   /**
@@ -125,12 +127,14 @@ export class MemberRepository {
   }
 
   //멤버 삭제
-  async deleteMemberByNo(memberNo: number): Promise<number | null> {
-    const result = await this.db.query(
-      `DELETE FROM member WHERE member_no = $1`,
-      [memberNo],
-    );
+  async deleteMemberByNo(memberNo: number): Promise<number> {
+    return this.db.withTransaction<number>(async (client) => {
+      const result = await client.query(
+        `DELETE FROM member WHERE member_no = $1`,
+        [memberNo],
+      );
 
-    return result.rowCount;
+      return result.rowCount;
+    });
   }
 }
