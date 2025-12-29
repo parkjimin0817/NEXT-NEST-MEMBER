@@ -66,4 +66,10 @@ export class BoardService {
       });
     }
   }
+
+  //게시글 수정하기
+  async updateBoard(memberNo: number, boardNo: number, dto: BoardCreateDto): Promise<number> {
+    const  updatedBoardNo = await this.boardRepository.updateBoard(memberNo, boardNo, dto);
+    return updatedBoardNo;
+  }
 }

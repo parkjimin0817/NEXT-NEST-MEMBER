@@ -79,7 +79,7 @@ export class MemberController {
    * 비밀번호 확인
    * POST / member / checkPwd
    */
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('checkPwd')
   async checkPwd(@Req() req, @Body('memberPwd') memberPwd: string) {
     const memberNo = Number(req.user.memberNo); // JWT에서 꺼낸 값

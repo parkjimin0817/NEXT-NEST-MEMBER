@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   Req,
@@ -33,7 +34,7 @@ export class BoardController {
   }
 
   //게시글 목록 불러오기
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getBoardList(
     @Query() query: BoardListQueryDto,
@@ -57,5 +58,16 @@ export class BoardController {
   ) {
     const memberNo = Number(req.user.memberNo);
     await this.boardService.deleteBoard(memberNo, boardNo);
+  }
+
+  //게시글 수정하기
+  @UseGuards(JwtAuthGuard)
+  @Patch(':boardNo')
+  async updateBoard(@Req() req, @Param('boardNo', ParseIntPipe) boardNo: number, @Body() dto: BoardCreateDto){
+    const memberNo = Number(req.user.memberNo);
+    const updatedBoardNo =  await this.boardService.updateBoard(memberNo, boardNo, dto);
+    return {
+      boardNo : updatedBoardNo
+    }
   }
 }

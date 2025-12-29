@@ -108,4 +108,23 @@ export class BoardRepository {
       return result.rowCount;
     });
   }
+
+  //게시글 수정하기
+  async updateBoard(memberNo: number, boardNo: number, board: BoardCreateDto): Promise<number> {
+    return this.db.withTransaction<number>(async (client) => {
+      const result = await client.query(
+        `UPDATE board 
+        SET board_title = $1,
+            board_content = $2
+        WHERE member_no = $3
+        AND board_no = $4`,
+        [board.boardTitle, board.boardContent, memberNo, boardNo],
+      );
+
+      if (result.rowCount === 0) {
+        throw new Error('수정 권한이 없거나 게시글이 존재하지 않습니다.');
+      }
+      return boardNo;
+    });
+  }
 }
