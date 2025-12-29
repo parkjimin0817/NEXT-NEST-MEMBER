@@ -146,7 +146,7 @@ export default function BoardDetail({ boardNo }: BoardDetailProps) {
 
         <div className="flex justify-between text-xs text-gray-500">
           <span>작성일: {createdAtText}</span>
-          <span>작성자: {detail.memberId}</span>
+          <span>작성자: {detail.memberId ? detail.memberId : '탈퇴회원'}</span>
         </div>
 
         {isMine && (

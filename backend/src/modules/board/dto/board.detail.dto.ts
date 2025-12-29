@@ -4,6 +4,6 @@ export class BoardDetailDto {
   boardContent: string;
   createdAt: Date;
 
-  memberNo: number;
-  memberId: string;
+  memberNo: number | null;
+  memberId: string | null;
 }

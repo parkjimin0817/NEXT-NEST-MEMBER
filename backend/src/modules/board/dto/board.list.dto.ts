@@ -5,10 +5,10 @@
 export class BoardListItemDto {
   boardNo: number;
   boardTitle: string;
-  memberNo: number;
+  memberNo: number | null;
   createdAt: Date;
 
-  memberId: string;
+  memberId: string | null;
 }
 
 /**

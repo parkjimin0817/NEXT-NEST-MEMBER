@@ -34,7 +34,7 @@ export class BoardController {
   }
 
   //게시글 목록 불러오기
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get()
   async getBoardList(
     @Query() query: BoardListQueryDto,

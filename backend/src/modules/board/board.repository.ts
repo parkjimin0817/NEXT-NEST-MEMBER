@@ -60,7 +60,7 @@ export class BoardRepository {
               b.created_at AS "createdAt",
               m.member_id AS "memberId"
         FROM  board b
-        JOIN member m ON b.member_no = m.member_no
+        LEFT JOIN member m ON b.member_no = m.member_no
         ORDER BY board_no DESC
         OFFSET $1
         LIMIT $2
@@ -87,7 +87,7 @@ export class BoardRepository {
               b.created_at AS "createdAt",
               m.member_id AS "memberId"
         FROM  board b
-        JOIN member m ON b.member_no = m.member_no
+        LEFT JOIN member m ON b.member_no = m.member_no
       WHERE board_no = $1`,
       [boardNo],
     );
